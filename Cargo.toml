@@ -1,0 +1,33 @@
+[package]
+name = "pid"
+version = "0.1.0"
+authors = ["root"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# Configure the build for minimal size
+[profile.dev]
+panic = "abort"
+lto = true
+opt-level = "s"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+debug = true
+lto = true
+opt-level = "s"
+
+
+[dependencies]
+# A panic handler is needed.  This is a crate with the most basic one.
+# The `leonardo-panic` example shows a more elaborate version.
+panic-halt = "0.2.0"
+# small, fast fmt
+ufmt = "0.1.0" 
+avr-device = "0.3"
+
+[dependencies.arduino-uno]
+git = "https://github.com/rahix/avr-hal"
+rev = "a20277873a8102998d5fd69743771bd8c0aa9423"
