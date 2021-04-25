@@ -8,13 +8,13 @@ mod timer;
 use arduino_uno::prelude::*;
 use panic_halt as _;
 
-// The AVR application entry point. The function signature 
-// ````
-//   fn main() -> !
-// ````
-// uses a feature of Rust to indicate that the function does not return. The
-// '!' return type instructs that compiler that it should not expect a return
-// value of any type from this function. This is known as the 'Never' type.
+/// The AVR application entry point. The function signature 
+/// ````
+///   fn main() -> !
+/// ````
+/// uses a feature of Rust to indicate that the function does not return. The
+/// '!' return type instructs that compiler that it should not expect a return
+/// value of any type from this function. This is the 'Never' type.
 #[arduino_uno::entry]
 fn main() -> ! {
     let dp = arduino_uno::Peripherals::take().unwrap();
@@ -36,14 +36,21 @@ fn main() -> ! {
     let sensor = pins.d2.into_pull_up_input(&mut pins.ddr);
     let mut pin_low = false;
     let mut prev = timer::millis();
+    // counter for revolutions - 2 per revolution
     let mut revs: i32 = 0;
 
     loop {
+        // time at the start of the loop
         let now = timer::millis();
         let elapsed = now - prev;
         if elapsed >= 1000 {
             // RPM is converted back to i32 to display with ufmt 
             // the flywheel has 2 magnets so we multiply by 30_000 millis 
+            // this loop is running fast enough so that elapsed will typically 
+            // be 1000 millis. This expression could be simplified to :
+            // ````
+            // let rpm = revs * 30;
+            // ````
             let rpm = (revs as f32  / elapsed as f32 * 30_0000.0) as i32;
             revs = 0;
             prev = now;
