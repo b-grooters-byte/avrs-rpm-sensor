@@ -1,6 +1,6 @@
 ![Banner](images/banner.png "Banner")
 
-This project is an RPM sensor example using embedded Rust, Arduino Uno R3, and a hall-effect sensor. This project builds on the [avrs-hall-sensor](https://gihub.com/bytetrail/avrs-hall-sensor) project so you may want to review that project prior to starting this project for environment setup and build instructions.
+This project is an RPM sensor example using embedded Rust, Arduino Uno R3, and a hall-effect sensor. This project builds on the [avrs-hall-sensor](https://github.com/bytetrail/avrs-hall-sensor) project so you may want to review that project prior to starting this project for environment setup and build instructions.
 
 # Getting Started
 
