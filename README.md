@@ -40,3 +40,10 @@ __NOTE__: I have observed some variability in the hall effect sensors used. Once
 
 # Building the Code
 This project uses the same environment I setup in the [avrs-hall-sensor](https://github.com/bytetrail/avrs-hall-sensor) project. I suggest reading through the setup guide in that project prior to starting this project if you do not already have a Rust AVR build environment setup.
+
+# Running
+Once you have succesfully installed the application and have the motor running you should enable the serial monitor in the Arduino IDE. You should see something like the following output:
+
+![Serial Monitor](images/serial-monitor.PNG)
+
+If you do not see this output you might want to check your wirong by running the avrs-hall-sensor project and manually turning the flywheel to ensure that you are getting detection events.
