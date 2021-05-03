@@ -10,7 +10,6 @@ use arduino_uno::prelude::*;
 use arduino_uno::{pwm};
 use panic_halt as _;
 
-
 /// The AVR application entry point. The function signature 
 /// ````
 ///   fn main() -> !
@@ -30,7 +29,8 @@ fn main() -> ! {
         57600.into_baudrate(),
     );
     // output startup message
-    ufmt::uwriteln!(&mut serial, "RPM 0.2.0\n").void_unwrap();
+    ufmt::uwriteln!(&mut serial, "RPM 0.3.0\n").void_unwrap();
+
     // set up a millisecond timer
     timer::millis_init(dp.TC0);
     // Enable interrupts globally
@@ -38,12 +38,13 @@ fn main() -> ! {
     // set up the hall effect sensor pin
     let sensor = pins.d2.into_pull_up_input(&mut pins.ddr);
     // motor 1 setup
-    let mut timer1 = pwm::Timer1Pwm::new(dp.TC1, pwm::Prescaler::Prescale64);
-    let mut pin_speed = pins.d9.into_output(&mut pins.ddr).into_pwm(&mut timer1);
-    // adjust this value to adjust the RPM
-    pin_speed.set_duty(250);
+    let mut pin_dir = pins.d4.into_output(&mut pins.ddr);
+    pin_dir.set_low().unwrap();
+    let mut timer2 = pwm::Timer2Pwm::new(dp.TC2, pwm::Prescaler::Prescale64);
+    let mut pin_speed = pins.d11.into_output(&mut pins.ddr).into_pwm(&mut timer2);
+    // adjust this value to adjust the RPM.
+    pin_speed.set_duty(255);
     pin_speed.enable();
-
     let mut pin_low = false;
     let mut prev = timer::millis();
     // counter for revolutions - 2 per revolution
@@ -59,12 +60,13 @@ fn main() -> ! {
             // this loop is running fast enough so that elapsed will typically 
             // be 1000 millis. This expression could be simplified to :
             // ````
-             let rpm = revs * 30;
+            // let rpm = revs * 30;
             // ````
-            //let rpm = ((revs as f32  / elapsed as f32 * 30_0000.0)) as i32;
+            // let rpm = ((revs as f32  / elapsed as f32 * 30_0000.0)) as i32;
+            let rpm = revs * 30;
             revs = 0;
             prev = now;
-            ufmt::uwriteln!(&mut serial, "RPM {}", rpm ).void_unwrap();
+            ufmt::uwriteln!(&mut serial, "RPM: {}", rpm ).void_unwrap();
         }
         if sensor.is_low().unwrap() && !pin_low{
             revs +=1;
