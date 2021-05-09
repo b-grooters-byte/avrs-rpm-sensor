@@ -30,7 +30,6 @@ fn main() -> ! {
     );
     // output startup message
     ufmt::uwriteln!(&mut serial, "RPM 0.3.0\n").void_unwrap();
-
     // set up a millisecond timer
     timer::millis_init(dp.TC0);
     // Enable interrupts globally
@@ -48,7 +47,7 @@ fn main() -> ! {
     let mut pin_low = false;
     let mut prev = timer::millis();
     // counter for revolutions - 2 per revolution
-    let mut revs: i32 = 0;
+    let mut revs: u16 = 0;
 
     loop {
         // time at the start of the loop
@@ -59,22 +58,24 @@ fn main() -> ! {
             // the flywheel has 2 magnets so we multiply by 30_000 millis 
             // this loop is running fast enough so that elapsed will typically 
             // be 1000 millis. This expression could be simplified to :
-            // ````
+            // ```
             // let rpm = revs * 30;
-            // ````
-            // let rpm = ((revs as f32  / elapsed as f32 * 30_0000.0)) as i32;
-            let rpm = revs * 30;
+            // ```
+            // currently there are floating point division issues in AVR Rust that 
+            // should be resolved prior to using this to calculate RPM
+            // ```
+            // let rpm = ((revs as f32 / elapsed as f32 * 30_0000.0)) as i32;
+            // ```
+            let rpm = revs * 30_u16;
+            ufmt::uwriteln!(&mut serial, "RPM: {}", rpm).void_unwrap();
             revs = 0;
             prev = now;
-            ufmt::uwriteln!(&mut serial, "RPM: {}", rpm ).void_unwrap();
         }
         if sensor.is_low().unwrap() && !pin_low{
-            revs +=1;
+            revs += 1;
             pin_low = true;
         } else if sensor.is_high().unwrap() && pin_low {
             pin_low = false;
         }
     }
 }
-
-
